@@ -5,6 +5,7 @@ import 'package:go_router/go_router.dart';
 import '../../data/valentine_day.dart';
 import '../../core/theme/app_theme.dart';
 import '../../core/lottie_cache_helper.dart';
+import '../../core/widgets/adaptive_image.dart';
 import 'day_interaction.dart';
 
 class DayScreen extends StatefulWidget {
@@ -148,8 +149,8 @@ class _DayScreenState extends State<DayScreen>
                       ),
                       child: ClipRRect(
                         borderRadius: BorderRadius.circular(20),
-                        child: Image.asset(
-                          widget.day.gifPath,
+                        child: AdaptiveImage(
+                          path: widget.day.gifPath,
                           fit: BoxFit.cover,
                           errorBuilder: (context, error, stackTrace) {
                             return Container(

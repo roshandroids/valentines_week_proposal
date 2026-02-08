@@ -1,5 +1,9 @@
 import 'valentine_day.dart';
 
+// 💡 Tip: You can use network URLs for gifPath to reduce bundle size!
+// Example: gifPath: 'https://raw.githubusercontent.com/roshandroids/valentines_week_proposal/master/assets/gifs/day1.gif'
+// See docs/NETWORK_IMAGES_GUIDE.md for detailed instructions
+
 final List<ValentineDay> valentineDays = [
   ValentineDay(
     date: 7,
