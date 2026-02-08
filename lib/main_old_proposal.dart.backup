@@ -1,0 +1,763 @@
+import 'package:flutter/material.dart';
+import 'package:google_fonts/google_fonts.dart';
+
+import 'features/home/home_screen.dart';
+
+void main() {
+  runApp(const ValentineApp());
+}
+
+class ValentineApp extends StatelessWidget {
+  const ValentineApp({super.key});
+
+  @override
+  Widget build(BuildContext context) {
+    return MaterialApp(
+      debugShowCheckedModeBanner: false,
+      title: 'Valentine Week Surprise',
+      theme: ThemeData(
+        colorScheme: ColorScheme.fromSeed(seedColor: const Color(0xFFC91F5A)),
+        textTheme: GoogleFonts.playfairDisplayTextTheme(
+          Theme.of(context).textTheme,
+        ),
+        useMaterial3: true,
+      ),
+      home: const HomeScreen(),
+    );
+  }
+}
+  const ValentinePage({super.key});
+
+  @override
+  State<ValentinePage> createState() => _ValentinePageState();
+}
+
+class _ValentinePageState extends State<ValentinePage>
+    with TickerProviderStateMixin {
+  final Random _rand = Random();
+  late final AnimationController _timeController;
+  late final AnimationController _petalController;
+  late final AnimationController _bobController;
+  late final AnimationController _celebrationController;
+
+  late final List<Petal> _petals;
+  late final List<Firefly> _fireflies;
+  late final List<ConfettiPiece> _confetti;
+
+  Timer? _jokeTimer;
+  int _jokeIndex = 0;
+  int _noDodges = 0;
+  bool _accepted = false;
+  Offset _noOffset = const Offset(0.65, 0.58);
+  DateTime _lastDodge = DateTime.fromMillisecondsSinceEpoch(0);
+
+  final List<String> _jokes = const [
+    'Roses are red, code compiles on first try... I am clearly dreaming, so say yes?',
+    'I trained a button to say "No" and it keeps running away. So should you. But please don\'t.',
+    'My heart has a 99.9% uptime. The 0.1% is when you say no.',
+    'If you say yes, I promise to refactor my bad jokes into great ones.',
+    'I asked the compiler for permission. It said: "approved". Your turn?',
+  ];
+
+  @override
+  void initState() {
+    super.initState();
+
+    _timeController = AnimationController(
+      vsync: this,
+      duration: const Duration(seconds: 24),
+    )..repeat();
+
+    _petalController = AnimationController(
+      vsync: this,
+      duration: const Duration(seconds: 18),
+    )..repeat();
+
+    _bobController = AnimationController(
+      vsync: this,
+      duration: const Duration(seconds: 6),
+    )..repeat(reverse: true);
+
+    _celebrationController = AnimationController(
+      vsync: this,
+      duration: const Duration(milliseconds: 1600),
+    );
+
+    _petals = List.generate(36, (index) {
+      return Petal(
+        x: _rand.nextDouble(),
+        y: _rand.nextDouble(),
+        size: _rand.nextDouble() * 10 + 8,
+        speed: _rand.nextDouble() * 0.6 + 0.2,
+        sway: _rand.nextDouble() * 0.04 + 0.01,
+        phase: _rand.nextDouble() * 2 * pi,
+        color:
+            Color.lerp(
+              const Color(0xFFFFB6C1),
+              const Color(0xFFFF6FA5),
+              _rand.nextDouble(),
+            ) ??
+            const Color(0xFFFFB6C1),
+      );
+    });
+
+    _fireflies = List.generate(30, (index) {
+      return Firefly(
+        x: _rand.nextDouble(),
+        y: _rand.nextDouble() * 0.6 + 0.1,
+        radius: _rand.nextDouble() * 2 + 1.5,
+        twinkle: _rand.nextDouble() * 2 * pi,
+      );
+    });
+
+    _confetti = List.generate(80, (index) {
+      final angle = _rand.nextDouble() * pi * 2;
+      return ConfettiPiece(
+        angle: angle,
+        speed: _rand.nextDouble() * 280 + 160,
+        size: _rand.nextDouble() * 6 + 4,
+        spin: _rand.nextDouble() * 6 - 3,
+        color:
+            Color.lerp(
+              const Color(0xFFFFC1CC),
+              const Color(0xFFFFF2B3),
+              _rand.nextDouble(),
+            ) ??
+            const Color(0xFFFFC1CC),
+      );
+    });
+
+    _jokeTimer = Timer.periodic(const Duration(seconds: 4), (_) {
+      if (!mounted || _accepted) return;
+      setState(() {
+        _jokeIndex = (_jokeIndex + 1) % _jokes.length;
+      });
+    });
+  }
+
+  @override
+  void dispose() {
+    _timeController.dispose();
+    _petalController.dispose();
+    _bobController.dispose();
+    _celebrationController.dispose();
+    _jokeTimer?.cancel();
+    super.dispose();
+  }
+
+  void _moveNoButton() {
+    final now = DateTime.now();
+    if (now.difference(_lastDodge).inMilliseconds < 180) {
+      return;
+    }
+    _lastDodge = now;
+    setState(() {
+      _noDodges++;
+      _noOffset = Offset(
+        0.35 + _rand.nextDouble() * 0.5,
+        0.45 + _rand.nextDouble() * 0.35,
+      );
+    });
+  }
+
+  void _accept() {
+    if (_accepted) return;
+    setState(() {
+      _accepted = true;
+    });
+    _celebrationController.forward(from: 0);
+  }
+
+  @override
+  Widget build(BuildContext context) {
+    return Scaffold(
+      body: AnimatedBuilder(
+        animation: Listenable.merge([
+          _timeController,
+          _petalController,
+          _bobController,
+        ]),
+        builder: (context, _) {
+          final media = MediaQuery.of(context);
+          return Stack(
+            children: [
+              CustomPaint(
+                size: media.size,
+                painter: GardenPainter(time: _timeController.value),
+              ),
+              CustomPaint(
+                size: media.size,
+                painter: FireflyPainter(
+                  time: _timeController.value,
+                  fireflies: _fireflies,
+                ),
+              ),
+              CustomPaint(
+                size: media.size,
+                painter: PetalPainter(
+                  time: _petalController.value,
+                  petals: _petals,
+                ),
+              ),
+              Align(
+                alignment: Alignment.bottomCenter,
+                child: Padding(
+                  padding: const EdgeInsets.symmetric(horizontal: 20),
+                  child: _MainCard(
+                    bobValue: _bobController.value,
+                    noOffset: _noOffset,
+                    noDodges: _noDodges,
+                    joke: _jokes[_jokeIndex],
+                    onYes: _accept,
+                    onNoHover: _moveNoButton,
+                    onNoTap: _moveNoButton,
+                  ),
+                ),
+              ),
+              if (_accepted)
+                CelebrationOverlay(
+                  controller: _celebrationController,
+                  confetti: _confetti,
+                ),
+            ],
+          );
+        },
+      ),
+    );
+  }
+}
+
+class _MainCard extends StatelessWidget {
+  const _MainCard({
+    required this.bobValue,
+    required this.noOffset,
+    required this.noDodges,
+    required this.joke,
+    required this.onYes,
+    required this.onNoHover,
+    required this.onNoTap,
+  });
+
+  final double bobValue;
+  final Offset noOffset;
+  final int noDodges;
+  final String joke;
+  final VoidCallback onYes;
+  final VoidCallback onNoHover;
+  final VoidCallback onNoTap;
+
+  @override
+  Widget build(BuildContext context) {
+    final size = MediaQuery.of(context).size;
+    final cardWidth = min(620.0, size.width - 32);
+    final cardHeight = min(360.0, size.height * 0.5);
+
+    return Transform.translate(
+      offset: Offset(0, -20 - bobValue * 8),
+      child: Center(
+        child: Container(
+          width: cardWidth,
+          height: cardHeight,
+          decoration: BoxDecoration(
+            color: Colors.white.withOpacity(0.12),
+            borderRadius: BorderRadius.circular(28),
+            border: Border.all(color: Colors.white.withOpacity(0.28)),
+            boxShadow: [
+              BoxShadow(
+                color: const Color(0xFF8B1245).withOpacity(0.3),
+                blurRadius: 24,
+                offset: const Offset(0, 12),
+              ),
+            ],
+          ),
+          child: ClipRRect(
+            borderRadius: BorderRadius.circular(28),
+            child: BackdropFilter(
+              filter: ImageFilter.blur(sigmaX: 12, sigmaY: 12),
+              child: Padding(
+                padding: const EdgeInsets.all(24),
+                child: Column(
+                  crossAxisAlignment: CrossAxisAlignment.start,
+                  children: [
+                    Text(
+                      'My Dear Love,',
+                      style: Theme.of(
+                        context,
+                      ).textTheme.headlineSmall?.copyWith(
+                        color: Colors.white,
+                        fontWeight: FontWeight.w700,
+                      ),
+                    ),
+                    const SizedBox(height: 6),
+                    Text(
+                      'Meri maya, will you be my Valentine?',
+                      style: Theme.of(
+                        context,
+                      ).textTheme.headlineMedium?.copyWith(
+                        color: Colors.white,
+                        fontWeight: FontWeight.w600,
+                      ),
+                    ),
+                    const SizedBox(height: 12),
+                    AnimatedSwitcher(
+                      duration: const Duration(milliseconds: 600),
+                      child: Text(
+                        joke,
+                        key: ValueKey(joke),
+                        style: Theme.of(context).textTheme.bodyLarge?.copyWith(
+                          color: Colors.white70,
+                          height: 1.4,
+                        ),
+                      ),
+                    ),
+                    const Spacer(),
+                    SizedBox(
+                      height: 120,
+                      child: LayoutBuilder(
+                        builder: (context, constraints) {
+                          final area = constraints.biggest;
+                          final yesOffset = Offset(
+                            area.width * 0.08,
+                            area.height * 0.58,
+                          );
+                          final noOffsetPx = Offset(
+                            area.width * noOffset.dx,
+                            area.height * noOffset.dy,
+                          );
+
+                          return Stack(
+                            children: [
+                              Positioned(
+                                left: yesOffset.dx,
+                                top: yesOffset.dy,
+                                child: ElevatedButton(
+                                  onPressed: onYes,
+                                  style: ElevatedButton.styleFrom(
+                                    backgroundColor: const Color(0xFFC91F5A),
+                                    foregroundColor: Colors.white,
+                                    padding: const EdgeInsets.symmetric(
+                                      horizontal: 24,
+                                      vertical: 14,
+                                    ),
+                                    textStyle: const TextStyle(
+                                      fontSize: 18,
+                                      fontWeight: FontWeight.bold,
+                                    ),
+                                    shape: RoundedRectangleBorder(
+                                      borderRadius: BorderRadius.circular(16),
+                                    ),
+                                  ),
+                                  child: const Text('Yes!'),
+                                ),
+                              ),
+                              Positioned(
+                                left: noOffsetPx.dx,
+                                top: noOffsetPx.dy,
+                                child: MouseRegion(
+                                  onEnter: (_) => onNoHover(),
+                                  onHover: (_) => onNoHover(),
+                                  child: GestureDetector(
+                                    onTapDown: (_) => onNoTap(),
+                                    child: OutlinedButton(
+                                      onPressed: onNoTap,
+                                      style: OutlinedButton.styleFrom(
+                                        foregroundColor: Colors.white70,
+                                        side: BorderSide(
+                                          color: Colors.white.withOpacity(0.5),
+                                        ),
+                                        padding: const EdgeInsets.symmetric(
+                                          horizontal: 20,
+                                          vertical: 14,
+                                        ),
+                                        textStyle: const TextStyle(
+                                          fontSize: 16,
+                                          fontWeight: FontWeight.w600,
+                                        ),
+                                        shape: RoundedRectangleBorder(
+                                          borderRadius: BorderRadius.circular(
+                                            16,
+                                          ),
+                                        ),
+                                      ),
+                                      child: Text('No (${noDodges})'),
+                                    ),
+                                  ),
+                                ),
+                              ),
+                            ],
+                          );
+                        },
+                      ),
+                    ),
+                  ],
+                ),
+              ),
+            ),
+          ),
+        ),
+      ),
+    );
+  }
+}
+
+class CelebrationOverlay extends StatelessWidget {
+  const CelebrationOverlay({
+    super.key,
+    required this.controller,
+    required this.confetti,
+  });
+
+  final AnimationController controller;
+  final List<ConfettiPiece> confetti;
+
+  @override
+  Widget build(BuildContext context) {
+    return AnimatedBuilder(
+      animation: controller,
+      builder: (context, _) {
+        final t = Curves.easeOut.transform(controller.value);
+        return Positioned.fill(
+          child: AbsorbPointer(
+            absorbing: true,
+            child: Stack(
+              children: [
+                Container(color: Colors.black.withOpacity(0.45 * t)),
+                CustomPaint(
+                  painter: ConfettiPainter(progress: t, confetti: confetti),
+                ),
+                Center(
+                  child: Transform.scale(
+                    scale: 0.85 + 0.2 * t,
+                    child: Opacity(
+                      opacity: t,
+                      child: Container(
+                        padding: const EdgeInsets.symmetric(
+                          horizontal: 28,
+                          vertical: 24,
+                        ),
+                        decoration: BoxDecoration(
+                          color: Colors.white.withOpacity(0.9),
+                          borderRadius: BorderRadius.circular(22),
+                          boxShadow: [
+                            BoxShadow(
+                              color: const Color(0xFFC91F5A).withOpacity(0.3),
+                              blurRadius: 24,
+                              offset: const Offset(0, 12),
+                            ),
+                          ],
+                        ),
+                        child: Column(
+                          mainAxisSize: MainAxisSize.min,
+                          children: [
+                            Text(
+                              'Yes!',
+                              style: Theme.of(
+                                context,
+                              ).textTheme.headlineMedium?.copyWith(
+                                color: const Color(0xFFC91F5A),
+                                fontWeight: FontWeight.w700,
+                              ),
+                            ),
+                            const SizedBox(height: 8),
+                            Text(
+                              'Meri maya, see you in our garden.\nI\'m all yours this Valentine.',
+                              textAlign: TextAlign.center,
+                              style: Theme.of(
+                                context,
+                              ).textTheme.bodyLarge?.copyWith(
+                                color: const Color(0xFF4A1B2A),
+                                height: 1.4,
+                              ),
+                            ),
+                          ],
+                        ),
+                      ),
+                    ),
+                  ),
+                ),
+              ],
+            ),
+          ),
+        );
+      },
+    );
+  }
+}
+
+class GardenPainter extends CustomPainter {
+  GardenPainter({required this.time});
+
+  final double time;
+
+  @override
+  void paint(Canvas canvas, Size size) {
+    final rect = Offset.zero & size;
+    final skyGradient = LinearGradient(
+      begin: Alignment.topCenter,
+      end: Alignment.bottomCenter,
+      colors: [
+        const Color(0xFF121A34),
+        const Color(0xFF2B1D3A),
+        const Color(0xFF3F1A33),
+      ],
+      stops: const [0, 0.6, 1],
+    );
+    canvas.drawRect(rect, Paint()..shader = skyGradient.createShader(rect));
+
+    final glow = Paint()..color = const Color(0xFFFFC1CC).withOpacity(0.3);
+    final moonOffset = Offset(size.width * 0.78, size.height * 0.18);
+    canvas.drawCircle(moonOffset, size.width * 0.08, glow);
+    canvas.drawCircle(
+      moonOffset,
+      size.width * 0.05,
+      Paint()..color = const Color(0xFFFFE6F0),
+    );
+
+    _paintHills(canvas, size, 0.55, const Color(0xFF1F2B3E));
+    _paintHills(canvas, size, 0.68, const Color(0xFF1A2030));
+    _paintHills(canvas, size, 0.8, const Color(0xFF112119));
+
+    final pathPaint = Paint()..color = const Color(0xFF3B2B2C);
+    final path =
+        Path()
+          ..moveTo(size.width * 0.4, size.height)
+          ..cubicTo(
+            size.width * 0.45,
+            size.height * 0.85,
+            size.width * 0.55,
+            size.height * 0.85,
+            size.width * 0.6,
+            size.height,
+          )
+          ..lineTo(size.width, size.height)
+          ..lineTo(0, size.height)
+          ..close();
+    canvas.drawPath(path, pathPaint);
+
+    _paintBench(canvas, size);
+    _paintFlowers(canvas, size, time);
+  }
+
+  void _paintHills(Canvas canvas, Size size, double heightFactor, Color color) {
+    final paint = Paint()..color = color;
+    final path = Path()..moveTo(0, size.height * heightFactor);
+    for (int i = 0; i <= 6; i++) {
+      final x = size.width * i / 6;
+      final y = size.height * heightFactor + sin(i * 1.1) * 18;
+      path.quadraticBezierTo(
+        x + size.width / 12,
+        y - 24,
+        x + size.width / 6,
+        y,
+      );
+    }
+    path
+      ..lineTo(size.width, size.height)
+      ..lineTo(0, size.height)
+      ..close();
+    canvas.drawPath(path, paint);
+  }
+
+  void _paintBench(Canvas canvas, Size size) {
+    final benchPaint = Paint()..color = const Color(0xFF5A2A2F);
+    final baseY = size.height * 0.7;
+    final benchWidth = size.width * 0.18;
+    final benchHeight = size.height * 0.03;
+    final left = size.width * 0.2;
+
+    canvas.drawRRect(
+      RRect.fromRectAndRadius(
+        Rect.fromLTWH(left, baseY, benchWidth, benchHeight),
+        const Radius.circular(6),
+      ),
+      benchPaint,
+    );
+    canvas.drawRect(
+      Rect.fromLTWH(left, baseY + benchHeight, benchWidth, benchHeight * 0.5),
+      benchPaint,
+    );
+    canvas.drawRect(
+      Rect.fromLTWH(left + 8, baseY + benchHeight * 1.5, 6, benchHeight * 1.5),
+      benchPaint,
+    );
+    canvas.drawRect(
+      Rect.fromLTWH(
+        left + benchWidth - 14,
+        baseY + benchHeight * 1.5,
+        6,
+        benchHeight * 1.5,
+      ),
+      benchPaint,
+    );
+  }
+
+  void _paintFlowers(Canvas canvas, Size size, double time) {
+    final stemPaint =
+        Paint()
+          ..color = const Color(0xFF2E6B3A)
+          ..strokeWidth = 3
+          ..strokeCap = StrokeCap.round;
+    final flowerPaint = Paint()..color = const Color(0xFFFF8FB1);
+
+    for (int i = 0; i < 8; i++) {
+      final x = size.width * (0.1 + i * 0.1);
+      final sway = sin(time * 2 * pi + i) * 8;
+      final baseY = size.height * 0.78;
+      final topY = size.height * 0.7 - (i % 3) * 10;
+      canvas.drawLine(Offset(x, baseY), Offset(x + sway, topY), stemPaint);
+      canvas.drawCircle(Offset(x + sway, topY), 6, flowerPaint);
+      canvas.drawCircle(
+        Offset(x + sway + 6, topY + 2),
+        4,
+        Paint()..color = const Color(0xFFFFD1DC),
+      );
+    }
+  }
+
+  @override
+  bool shouldRepaint(covariant GardenPainter oldDelegate) {
+    return oldDelegate.time != time;
+  }
+}
+
+class PetalPainter extends CustomPainter {
+  PetalPainter({required this.time, required this.petals});
+
+  final double time;
+  final List<Petal> petals;
+
+  @override
+  void paint(Canvas canvas, Size size) {
+    for (final petal in petals) {
+      final t = (time * 2 * pi * petal.speed + petal.phase) % (2 * pi);
+      final dx = (petal.x + sin(t) * petal.sway) % 1.0;
+      final dy = (petal.y + time * petal.speed) % 1.0;
+      final pos = Offset(dx * size.width, dy * size.height);
+
+      canvas.save();
+      canvas.translate(pos.dx, pos.dy);
+      canvas.rotate(sin(t) * 0.5);
+      final rect = Rect.fromCenter(
+        center: Offset.zero,
+        width: petal.size * 0.8,
+        height: petal.size,
+      );
+      final rrect = RRect.fromRectAndRadius(rect, const Radius.circular(8));
+      canvas.drawRRect(rrect, Paint()..color = petal.color.withOpacity(0.8));
+      canvas.restore();
+    }
+  }
+
+  @override
+  bool shouldRepaint(covariant PetalPainter oldDelegate) {
+    return oldDelegate.time != time;
+  }
+}
+
+class FireflyPainter extends CustomPainter {
+  FireflyPainter({required this.time, required this.fireflies});
+
+  final double time;
+  final List<Firefly> fireflies;
+
+  @override
+  void paint(Canvas canvas, Size size) {
+    for (final fly in fireflies) {
+      final twinkle = (sin(time * 2 * pi + fly.twinkle) + 1) / 2;
+      final paint =
+          Paint()
+            ..color = const Color(0xFFFFE9A6).withOpacity(0.3 + twinkle * 0.6)
+            ..maskFilter = const MaskFilter.blur(BlurStyle.normal, 6);
+      final pos = Offset(fly.x * size.width, fly.y * size.height);
+      canvas.drawCircle(pos, fly.radius + twinkle * 2, paint);
+    }
+  }
+
+  @override
+  bool shouldRepaint(covariant FireflyPainter oldDelegate) {
+    return oldDelegate.time != time;
+  }
+}
+
+class ConfettiPainter extends CustomPainter {
+  ConfettiPainter({required this.progress, required this.confetti});
+
+  final double progress;
+  final List<ConfettiPiece> confetti;
+
+  @override
+  void paint(Canvas canvas, Size size) {
+    final origin = Offset(size.width * 0.5, size.height * 0.45);
+    for (final piece in confetti) {
+      final t = progress;
+      final dx = cos(piece.angle) * piece.speed * t;
+      final dy = sin(piece.angle) * piece.speed * t + 220 * t * t;
+      final pos = origin + Offset(dx, dy);
+      canvas.save();
+      canvas.translate(pos.dx, pos.dy);
+      canvas.rotate(piece.spin * t);
+      final rect = Rect.fromCenter(
+        center: Offset.zero,
+        width: piece.size,
+        height: piece.size * 0.6,
+      );
+      canvas.drawRect(rect, Paint()..color = piece.color);
+      canvas.restore();
+    }
+  }
+
+  @override
+  bool shouldRepaint(covariant ConfettiPainter oldDelegate) {
+    return oldDelegate.progress != progress;
+  }
+}
+
+class Petal {
+  const Petal({
+    required this.x,
+    required this.y,
+    required this.size,
+    required this.speed,
+    required this.sway,
+    required this.phase,
+    required this.color,
+  });
+
+  final double x;
+  final double y;
+  final double size;
+  final double speed;
+  final double sway;
+  final double phase;
+  final Color color;
+}
+
+class Firefly {
+  const Firefly({
+    required this.x,
+    required this.y,
+    required this.radius,
+    required this.twinkle,
+  });
+
+  final double x;
+  final double y;
+  final double radius;
+  final double twinkle;
+}
+
+class ConfettiPiece {
+  const ConfettiPiece({
+    required this.angle,
+    required this.speed,
+    required this.size,
+    required this.spin,
+    required this.color,
+  });
+
+  final double angle;
+  final double speed;
+  final double size;
+  final double spin;
+  final Color color;
+}

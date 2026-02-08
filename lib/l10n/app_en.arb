@@ -1,0 +1,211 @@
+{
+  "@@locale": "en",
+  "appTitle": "Valentine Week Surprise",
+  "@appTitle": {
+    "description": "The application title"
+  },
+  "proposalQuestion": "Will you be my Valentine? 💖",
+  "@proposalQuestion": {
+    "description": "Proposal screen question"
+  },
+  "proposalSubtitle": "I promise to make every day as magical as today...",
+  "@proposalSubtitle": {
+    "description": "Proposal screen subtitle"
+  },
+  "yesButton": "Yes! 💕",
+  "@yesButton": {
+    "description": "Yes button text"
+  },
+  "noButton": "No",
+  "@noButton": {
+    "description": "No button text"
+  },
+  "sarcasticMessage1": "Really? Try again! 😏",
+  "@sarcasticMessage1": {
+    "description": "First sarcastic message"
+  },
+  "sarcasticMessage2": "Come on, you know you want to! 😉",
+  "@sarcasticMessage2": {
+    "description": "Second sarcastic message"
+  },
+  "sarcasticMessage3": "The 'No' button is broken, try 'Yes'! 😄",
+  "@sarcasticMessage3": {
+    "description": "Third sarcastic message"
+  },
+  "sarcasticMessage4": "I'll keep moving it! Just say yes! 😂",
+  "@sarcasticMessage4": {
+    "description": "Fourth sarcastic message"
+  },
+  "sarcasticMessage5": "You're making this harder than it needs to be! 💝",
+  "@sarcasticMessage5": {
+    "description": "Fifth sarcastic message"
+  },
+  "happyMessage": "You've made me the happiest! 🎉",
+  "@happyMessage": {
+    "description": "Happy message when yes is clicked"
+  },
+  "surprisesMessage": "I have some special surprises waiting for you...",
+  "@surprisesMessage": {
+    "description": "Message about surprises"
+  },
+  "calendarTitle": "Valentine Week 2026",
+  "@calendarTitle": {
+    "description": "Calendar screen title"
+  },
+  "calendarSubtitle": "A Week of Love & Surprises",
+  "@calendarSubtitle": {
+    "description": "Calendar screen subtitle"
+  },
+  "unlocksIn": "Unlocks in:",
+  "@unlocksIn": {
+    "description": "Countdown label"
+  },
+  "days": "DAYS",
+  "@days": {
+    "description": "Days label in countdown"
+  },
+  "hours": "HRS",
+  "@hours": {
+    "description": "Hours label in countdown"
+  },
+  "minutes": "MIN",
+  "@minutes": {
+    "description": "Minutes label in countdown"
+  },
+  "seconds": "SEC",
+  "@seconds": {
+    "description": "Seconds label in countdown"
+  },
+  "roseDay": "Rose Day",
+  "@roseDay": {
+    "description": "Title for Rose Day"
+  },
+  "roseDayMessage": "They say roses are red... but mine came with a receipt. Just kidding! These virtual roses never wilt, unlike my patience waiting for you. 🌹",
+  "@roseDayMessage": {
+    "description": "Message for Rose Day"
+  },
+  "teddyDay": "Teddy Day",
+  "@teddyDay": {
+    "description": "Title for Teddy Day"
+  },
+  "teddyDayMessage": "I got you a teddy bear because it's the only thing that can handle your bear hugs without complaining. Unlike me. 🧸",
+  "@teddyDayMessage": {
+    "description": "Message for Teddy Day"
+  },
+  "chocolateDay": "Chocolate Day",
+  "@chocolateDay": {
+    "description": "Title for Chocolate Day"
+  },
+  "chocolateDayMessage": "Life is like a box of chocolates... and you stole all the good ones. But I still love you more than chocolate. That's saying something. 🍫",
+  "@chocolateDayMessage": {
+    "description": "Message for Chocolate Day"
+  },
+  "proposeDay": "Propose Day",
+  "@proposeDay": {
+    "description": "Title for Propose Day"
+  },
+  "proposeDayMessage": "I practiced this proposal in front of my mirror 47 times. The mirror said yes. Your turn now? 💍",
+  "@proposeDayMessage": {
+    "description": "Message for Propose Day"
+  },
+  "hugDay": "Hug Day",
+  "@hugDay": {
+    "description": "Title for Hug Day"
+  },
+  "hugDayMessage": "Hugs are free, calorie-free, and scientifically proven to improve mood. So basically, I'm doing you a health favor here. You're welcome. 🤗",
+  "@hugDayMessage": {
+    "description": "Message for Hug Day"
+  },
+  "kissDay": "Kiss Day",
+  "@kissDay": {
+    "description": "Title for Kiss Day"
+  },
+  "kissDayMessage": "I googled \"How to be a better kisser\" and the first result was \"practice\". So... science says we should practice. A lot. 💋",
+  "@kissDayMessage": {
+    "description": "Message for Kiss Day"
+  },
+  "promiseDay": "Promise Day",
+  "@promiseDay": {
+    "description": "Title for Promise Day"
+  },
+  "promiseDayMessage": "I promise to laugh at your jokes (even the bad ones), share my fries (sometimes), and love you forever (definitely). 💕",
+  "@promiseDayMessage": {
+    "description": "Message for Promise Day"
+  },
+  "valentineDay": "Valentine's Day",
+  "@valentineDay": {
+    "description": "Title for Valentine's Day"
+  },
+  "valentineDayMessage": "My Dear Love, through all the jokes and sarcasm, here's the truth: You make every day feel like Valentine's Day. Thank you for being you, for being mine, for being us. I love you more than words can express. Happy Valentine's Day, meri maya. ❤️",
+  "@valentineDayMessage": {
+    "description": "Message for Valentine's Day"
+  },
+  "tapToSendLove": "Tap to send love",
+  "@tapToSendLove": {
+    "description": "Tap interaction prompt"
+  },
+  "heartTapped": "You tapped my heart! 💕",
+  "@heartTapped": {
+    "description": "Message after tap"
+  },
+  "holdToHug": "Hold to hug",
+  "@holdToHug": {
+    "description": "Long press interaction prompt"
+  },
+  "feelingLove": "Feeling the love! 🤗",
+  "@feelingLove": {
+    "description": "Message during long press"
+  },
+  "chocolatesCollected": "Chocolates Collected",
+  "@chocolatesCollected": {
+    "description": "Counter label for chocolate day"
+  },
+  "kissesCollected": "Kisses Collected",
+  "@kissesCollected": {
+    "description": "Counter label for kiss day"
+  },
+  "grabChocolate": "Grab Chocolate 🍫",
+  "@grabChocolate": {
+    "description": "Button to collect chocolate"
+  },
+  "sendKiss": "Send Kiss 💋",
+  "@sendKiss": {
+    "description": "Button to send kiss"
+  },
+  "myPromises": "My Promises to You:",
+  "@myPromises": {
+    "description": "Promises header"
+  },
+  "promise1": "Always laugh at your jokes 😄",
+  "@promise1": {
+    "description": "First promise for Promise Day"
+  },
+  "promise2": "Share my snacks (sometimes) 🍿",
+  "@promise2": {
+    "description": "Second promise for Promise Day"
+  },
+  "promise3": "Give unlimited hugs 🤗",
+  "@promise3": {
+    "description": "Third promise for Promise Day"
+  },
+  "promise4": "Love you forever ❤️",
+  "@promise4": {
+    "description": "Fourth promise for Promise Day"
+  },
+  "proposePromise1": "Make you smile every day 😊",
+  "@proposePromise1": {
+    "description": "First promise for Propose Day"
+  },
+  "proposePromise2": "Be your biggest supporter 💪",
+  "@proposePromise2": {
+    "description": "Second promise for Propose Day"
+  },
+  "proposePromise3": "Always be honest 🤝",
+  "@proposePromise3": {
+    "description": "Third promise for Propose Day"
+  },
+  "proposePromise4": "Love you unconditionally ❤️",
+  "@proposePromise4": {
+    "description": "Fourth promise for Propose Day"
+  }
+}
